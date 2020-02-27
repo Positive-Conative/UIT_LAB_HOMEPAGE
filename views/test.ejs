@@ -1,45 +1,111 @@
 <html>
     <head>
-        <title>My Winning Wheel</title>
+        <title>돌림판</title>
 		<script src='javascripts/winwheel/Winwheel.js'></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
-
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     </head>
     <body>
 		<table width="100%">
 			<tbody><tr>
+				<div id="canvasContainer">
 				<td width="420">
 					<canvas id="canvas" class="tutCanvas" width="400" height="400"></canvas>
+					<img id="prizePointer" src="images/pointer.png" alt="V" />
 				</td>
-				<td>
-					<button id="bigButton" class="bigButton" onclick="spinWheel.startAnimation(); this.disabled=true;" disabled="">Spin the Wheel</button>
-					&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" onclick="spinWheel.stopAnimation(); spinWheel.rotationAngle=0; spinWheel.draw(); bigButton.disabled=false;">Reset</a>
-				</td>
-					
+			</div>
+				
+			<td>
+					<input type ="text"id="segment">
+				<button onClick="addSegment();">추가</button>
+				<button onClick="deleteSegment();">삭제</button><br>
+				<button id="bigButton" class="bigButton" onclick="spinWheel.startAnimation(); this.disabled=true;" disabled="">돌리기</button>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" onclick="spinWheel.stopAnimation(); spinWheel.rotationAngle=0; spinWheel.draw(); bigButton.disabled=false;">초기화</a>
+			</td>
+				
 			</tr>
 		</tbody></table>
-		<script>
+	<script>
+		let tp = new Winwheel({
+    	 'canvasId'    : 'trianglePointer',
+   		 'outerRadius' : 110,
+   		 'fillStyle'   : '#eae56f'
+		});
 			let spinWheel = new Winwheel({
-				'numSegments'    : 4,
+				'numSegments'    : 0,
 				'outerRadius'    : 170,
 				'segments'       :
 				[
-					{'fillStyle' : '#eae56f', 'text' : 'Prize One'},
-					{'fillStyle' : '#89f26e', 'text' : 'Prize Two'},
-					{'fillStyle' : '#7de6ef', 'text' : 'Prize Three'},
-					{'fillStyle' : '#e7706f', 'text' : 'Prize Four'}
+					
 				],
+				'textOrientation' : 'curved',
+				'textAligment' : 'center',
 				'animation' :
 				{
 					'type'     : 'spinToStop',
-					'duration' : 5,
-					'spins'    : 30
+					'duration' : 7,
+					'spins'    : 20
 				}
 			});
-	
-		</script>
+			let tcanvas = document.getElementById('trianglePointer');
+			let tx = tcanvas.getContext('2d');
+			if(tx)
+			{
+   			 tx.strokeStyle = '#000000';     // Set line colour.
+   			 tx.fillStyle   = 'aqua';        // Set fill colour.
+    		 tx.lineWidth   = 2;
+   			 tx.beginPath();                 // Begin path.
+   			 tx.moveTo(175, 20);             // Move to initial position.
+    	 	 tx.lineTo(235, 20);             // Draw lines to make the shape.
+  		 	 tx.lineTo(205, 80);
+   			 tx.lineTo(176, 20);
+  		 	 tx.stroke();                    // Complete the path by stroking (draw lines).
+  		 	 tx.fill();                      // Then fill with colour.
+			}			
+
+
+		function addSegment()
+   		{
+			$("#sement").val('');
+			let newSegment = spinWheel.addSegment(); // Add segment
+			var segmentvalue = document.getElementById("segment").value;
+			var segment = document.getElementById("segment");
+			var randomColor = "#"+Math.round(Math.random()*0xffffff).toString(16);
+			
+
+ 			newSegment.text = segmentvalue;// Set text and fillStyle using returned
+ 			newSegment.fillStyle = randomColor; // pointer to the segment object.
+  
+ 			spinWheel.draw();
+			
+			
+    	}
+ 
+   		function deleteSegment()
+    	{
+	        spinWheel.deleteSegment();
+ 
+    	    spinWheel.draw();
+    	}
+	</script>
 			 
 			
 	</body>
 	</html>
-	
+	<style>
+		#canvasContainer {
+    position: relative;
+    width: 300px;
+}
+ 
+#canvas {
+    z-index: 1;
+}
+ 
+#prizePointer {
+    position: absolute;
+    left: 125px;
+    top: 10px;
+    z-index: 999;
+}
+	</style>
